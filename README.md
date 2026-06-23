@@ -1,43 +1,36 @@
-# e-bazar
-
-A TypeScript-based project created by Md. Shazzak Hossain. This repository contains a modern web application built with a focus on clean, maintainable code.
-
-## Project Overview
-
-e-bazar is an open-source project that showcases a blend of frontend technologies working together. The codebase is primarily written in TypeScript, complemented by JavaScript, HTML, and CSS to create a complete web experience.
-
-## Technology Stack
-
-The project leverages several technologies to deliver its functionality:
-
-- **TypeScript** - The primary language, providing strong typing and better code maintainability
-- **JavaScript** - Adds dynamic functionality and interactivity
-- **HTML** - Structures the web content and user interface
-- **CSS** - Handles styling and visual presentation
-
-## Language Composition
-
-- TypeScript: 60,458 bytes (98%)
-- JavaScript: 990 bytes (2%)
-- HTML: 366 bytes (<1%)
-- CSS: 59 bytes (<1%)
-
-## Key Features
-
-- Built with modern web standards
-- Open for community contributions and improvements
-- Actively maintained and regularly updated
-- Public repository available for anyone to fork and contribute
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-To get started with this project, clone the repository and explore the codebase. The main branch serves as the primary development branch.
+First, run the development server:
 
-## License
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-This project is open source and available for public use. Check the repository for license details.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-**Created by:** Md. Shazzak Hossain  
-**Repository:** [Shazzak114/e-bazar](https://github.com/Shazzak114/e-bazar)
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
