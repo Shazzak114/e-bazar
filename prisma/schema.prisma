@@ -1,0 +1,238 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Division {
+  id        String   @id @default(cuid())
+  nameBn    String
+  nameEn    String   @unique
+  districts District[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model District {
+  id          String     @id @default(cuid())
+  divisionId  String
+  division    Division   @relation(fields: [divisionId], references: [id])
+  nameBn      String
+  nameEn      String
+  deliveryFee Int        @default(200)
+  deliveryDays Int       @default(3)
+  upazilas    Upazila[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([divisionId])
+}
+
+model Upazila {
+  id         String   @id @default(cuid())
+  districtId String
+  district   District @relation(fields: [districtId], references: [id])
+  nameBn     String
+  nameEn     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([districtId])
+}
+
+model Product {
+  id              String           @id @default(cuid())
+  slug            String           @unique
+  nameBn          String
+  nameEn          String
+  variety         String
+  descriptionBn   String?
+  descriptionEn   String?
+  pricePerKg      Int
+  bulkPricingTiers Json?           @default("[]")
+  stockKg         Int              @default(0)
+  status          ProductStatus    @default(ACTIVE)
+  featured        Boolean          @default(false)
+  seasonStart     Int?
+  seasonEnd       Int?
+  images          String[]         @default([])
+  tags            String[]         @default([])
+  weightOptions   Int[]            @default([10, 15, 20, 25])
+  seoTitleBn      String?
+  seoTitleEn      String?
+  seoDescBn       String?
+  seoDescEn       String?
+  seoKeywords     String[]         @default([])
+  ogImage         String?
+  orderItems      OrderItem[]
+  reviews         Review[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([variety])
+  @@index([status])
+  @@index([featured])
+}
+
+model Order {
+  id                   String      @id @default(cuid())
+  orderNumber          String      @unique
+  customerName         String
+  customerPhone        String
+  customerPhoneAlt     String?
+  customerEmail        String?
+  divisionId           String
+  districtId           String
+  upazilaId            String
+  fullAddress          String
+  specialInstructions  String?
+  deliveryDate         DateTime?
+  orderItems           OrderItem[]
+  subtotal             Int
+  deliveryFee          Int
+  totalAmount          Int
+  paymentMethod        PaymentMethod @default(COD)
+  status               OrderStatus   @default(PENDING)
+  internalNotes        String?
+  assignedDeliveryPerson String?
+  timeline             Json?         @default("[]")
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@index([customerPhone])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id])
+  productSnapshot Json
+  weightKg       Int
+  pricePerKg     Int
+  totalPrice     Int
+  createdAt      DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Customer {
+  id         String   @id @default(cuid())
+  name       String?
+  phone      String   @unique
+  email      String?
+  addresses  Json?    @default("[]")
+  totalOrders Int     @default(0)
+  totalSpent Int      @default(0)
+  segment    CustomerSegment @default(NEW)
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         AdminRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  customerId String?
+  productId  String?
+  product    Product? @relation(fields: [productId], references: [id])
+  rating     Int      @default(5)
+  reviewText String?
+  customerName String @default("গোপনীয়তা গ্রাহক")
+  location   String?
+  approved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([productId])
+}
+
+model PromoCode {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  discountType  DiscountType @default(PERCENT)
+  discountValue Int
+  minOrderValue Int          @default(0)
+  usageLimit    Int?
+  usedCount     Int          @default(0)
+  validFrom     DateTime     @default(now())
+  validUntil    DateTime?
+  active        Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model SeoSettings {
+  id                      String   @id @default(cuid())
+  siteTitleBn             String   @default("Am Bagan — সেরা আম অনলাইনে")
+  siteTitleEn             String   @default("Am Bagan — Premium Mango Online")
+  siteDescriptionBn       String   @default("রাজশাহীর সেরা আম সরাসরি বাগান থেকে। ক্যাশ অন ডেলিভারি, সারাদেশে ডেলিভারি।")
+  siteDescriptionEn       String   @default("Premium Rajshahi mangoes delivered fresh from the orchard. Cash on delivery, nationwide shipping.")
+  defaultOgImage          String?
+  googleVerification      String?
+  googleAnalyticsId       String?
+  facebookPixelId         String?
+  robotsTxt               String   @default("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: https://ambagan.com/sitemap.xml")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  PREORDER
+  OUT_OF_STOCK
+}
+
+enum PaymentMethod {
+  COD
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  HARVESTING
+  PACKED
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum CustomerSegment {
+  NEW
+  REGULAR
+  VIP
+}
+
+enum AdminRole {
+  ADMIN
+  MANAGER
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+  FREE_DELIVERY
+}
